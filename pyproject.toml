@@ -1,0 +1,14 @@
+[project]
+name = "marsh-sim"
+version = "2026.01.02"
+description = "Python utilities for MARSH-Sim"
+readme = "README.md"
+requires-python = ">=3.9"
+authors = [
+  { name = "Marek S. Łukasiewicz", email = "marek@lukasiewicz.tech" }
+]
+dependencies = []
+
+[project.urls]
+Homepage = "https://marsh-sim.github.io/"
+Repository = "https://github.com/marsh-sim/python.marsh-sim"

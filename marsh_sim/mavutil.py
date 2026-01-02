@@ -12,11 +12,12 @@ import copy
 import json
 import re
 import platform
-from pymavlink import mavexpression
+from . import mavexpression
 import ssl
+from . import mavlink as mavlink_module
 
 # We want to re-export x25crc here
-from pymavlink.generator.mavcrc import x25crc as x25crc
+from .mavlink import x25crc as x25crc
 
 # adding these extra imports allows pymavlink to be used directly with pyinstaller
 # without having complex spec files. To allow for installs that don't have ardupilotmega
@@ -30,8 +31,9 @@ except Exception:
 UDP_MAX_PACKET_LEN = 65535
 
 # Store the MAVLink library for the currently-selected dialect
-# (set by set_dialect())
-mavlink = None
+# Hardcoded in marsh-sim
+mavlink = mavlink_module
+current_dialect = "all"
 
 # Store the mavlink file currently being operated on
 # (set by mavlink_connection())
@@ -43,17 +45,11 @@ default_native = False
 # link_id used for signing
 global_link_id = 0
 
-# Use a globally-set MAVLink dialect if one has been specified as an environment variable.
-if not 'MAVLINK_DIALECT' in os.environ:
-    os.environ['MAVLINK_DIALECT'] = 'ardupilotmega'
-
 def mavlink10():
-    '''return True if using MAVLink 1.0 or later'''
-    return not 'MAVLINK09' in os.environ
+    return False
 
 def mavlink20():
-    '''return True if using MAVLink 2.0'''
-    return 'MAVLINK20' in os.environ
+    return True
 
 def evaluate_expression(expression, vars, nocondition=False):
     '''evaluation an expression'''
@@ -102,40 +98,7 @@ def add_message(messages, mtype, msg):
     messages["%s[%s]" % (mtype, str(instance_value))] = copy.copy(msg)
 
 def set_dialect(dialect, with_type_annotations=None):
-    '''set the MAVLink dialect to work with.
-    For example, set_dialect("ardupilotmega")
-    '''
-    global mavlink, current_dialect
-    from .generator import mavparse
-
-    if with_type_annotations is not None:
-        print("with_type_annotations ignored; remove parameter")
-
-    if 'MAVLINK20' in os.environ:
-        wire_protocol = mavparse.PROTOCOL_2_0
-        modname = "pymavlink.dialects.v20." + dialect
-    elif mavlink is None or mavlink.WIRE_PROTOCOL_VERSION == "1.0" or not 'MAVLINK09' in os.environ:
-        wire_protocol = mavparse.PROTOCOL_1_0
-        modname = "pymavlink.dialects.v10." + dialect
-    else:
-        wire_protocol = mavparse.PROTOCOL_0_9
-        modname = "pymavlink.dialects.v09." + dialect
-
-    try:
-        mod = __import__(modname)
-    except Exception:
-        # auto-generate the dialect module
-        from .generator.mavgen import mavgen_python_dialect
-        mavgen_python_dialect(dialect, wire_protocol)
-        mod = __import__(modname)
-    components = modname.split('.')
-    for comp in components[1:]:
-        mod = getattr(mod, comp)
-    current_dialect = dialect
-    mavlink = mod
-
-# Set the default dialect. This is done here as it needs to be after the function declaration
-set_dialect(os.environ['MAVLINK_DIALECT'])
+    raise NotImplementedError("Generator excluded from marsh-sim package, only MAVLink 2.0 supported")
 
 class mavfile_state(object):
     '''state for a particular system id'''

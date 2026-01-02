@@ -15,7 +15,7 @@ run = "git submodule update --init --recursive"
 
 [tasks.mavgen]
 description = "Generate MAVLink files"
-run = "mavgen.py -o ./marsh_sim/mavlink.py --lang Python3 --wire-protocol 2.0 --strict-units ./dialect/message_definitions/v1.0/all.xml"
+run = "mavgen.py -o ./marsh_sim/mavlink.py --lang Python3 --wire-protocol 2.0 --strict-units ./dialect/message_definitions/v1.0/marsh.xml"
 sources = ["./dialect/message_definitions/v1.0/*.xml"]
 outputs = ["./marsh_sim/mavlink.py"]
 depends = ["submodules"]

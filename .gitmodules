@@ -1,0 +1,4 @@
+[submodule "dialect"]
+	path = dialect
+	url = https://github.com/marsh-sim/mavlink.git
+	branch = dialect

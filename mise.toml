@@ -1,0 +1,25 @@
+[tools]
+uv = "latest"
+
+[settings]
+python.uv_venv_auto = true
+
+[tasks.update]
+description = "Update dialect to latest version"
+run = "git pull origin dialect"
+dir = "./dialect"
+
+[tasks.submodules]
+description = "Checkout git submodules at specified commit"
+run = "git submodule update --init --recursive"
+
+[tasks.mavgen]
+description = "Generate MAVLink files"
+run = "mavgen.py -o ./marsh_sim/mavlink.py --lang Python3 --wire-protocol 2.0 --strict-units ./dialect/message_definitions/v1.0/all.xml"
+sources = ["./dialect/message_definitions/v1.0/*.xml"]
+outputs = ["./marsh_sim/mavlink.py"]
+depends = ["submodules"]
+
+[tasks.build]
+description = "Build the Python package"
+run = "uv build"
